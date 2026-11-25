@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>NEXORA — Your World. Your Stories.</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131f33;--line:#263750;--text:#eef5ff;--muted:#a9bad0;--accent:#71e0d0;--gold:#f2ce85}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b3150 0,#0b1220 55%);color:var(--text);font:16px/1.5 system-ui, sans-serif;min-height:100vh}
+main{max-width:760px;margin:auto;padding:22px 16px 48px}.brand{letter-spacing:.22em;color:var(--accent);font-size:12px;font-weight:800}
+h1{font-size:clamp(32px,8vw,54px);line-height:1.05;margin:10px 0}h1 span{color:var(--accent)}.tag{color:var(--muted);margin:0 0 22px}
+.panel{background:rgba(19,31,51,.94);border:1px solid var(--line);border-radius:20px;padding:17px;margin:14px 0;box-shadow:0 12px 32px #0003}
+h2{font-size:19px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.char{border:1px solid var(--line);border-radius:15px;padding:13px;background:#0f1a2b;cursor:pointer;color:var(--text);text-align:left;min-height:112px}
+.char.active{border-color:var(--accent);background:#142c3b}.emoji{font-size:26px;display:block}.name{font-weight:750}.desc{font-size:13px;color:var(--muted)}
+button,select,input{font:inherit}button.action{border:0;border-radius:13px;padding:12px 15px;background:var(--accent);color:#08202a;font-weight:800;cursor:pointer}
+button.secondary{border:1px solid var(--line);background:#0f1a2b;color:var(--text);border-radius:12px;padding:10px 12px}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.chatlog{min-height:145px;max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:9px}
+.bubble{padding:11px 13px;border-radius:14px;background:#1b2b42;max-width:92%}.bubble.you{align-self:flex-end;background:#17433f}.speaker{font-size:12px;color:var(--gold);font-weight:800}
+input,select{width:100%;background:#0b1626;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px}
+form{display:flex;gap:8px}form input{flex:1;min-width:0}.small{font-size:12px;color:var(--muted)}.notice{border-left:3px solid var(--gold);padding:9px 12px;color:var(--muted);font-size:13px}
+#memory{white-space:pre-wrap;color:var(--muted);font-size:14px}
+@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.char{padding:10px}}
+</style>
+</head>
+<body><main>
+<div class="brand">NEXORA</div>
+<h1>YOUR WORLD.<br><span>YOUR STORIES.</span></h1>
+<p class="tag">Vyber si průvodce. Otevři příběh. Vytvoř vlastní svět.</p>
+
+<section class="panel">
+<h2>🌌 Tvoji průvodci</h2>
+<div class="grid" id="characters">
+<button class="char active" data-id="sofie"><span class="emoji">🌟</span><span class="name">Sofie</span><br><span class="desc">Přátelská, optimistická a zvídavá</span></button>
+<button class="char" data-id="alex"><span class="emoji">🔬</span><span class="name">Alex</span><br><span class="desc">Klidný, logický a přemýšlivý</span></button>
+<button class="char" data-id="orion"><span class="emoji">🪄</span><span class="name">Orion</span><br><span class="desc">Moudrý průvodce fantasy světem</span></button>
+<button class="char" data-id="lira"><span class="emoji">🍃</span><span class="name">Lira</span><br><span class="desc">Elfí kartografka zapomenutých míst</span></button>
+</div>
+</section>
+
+<section class="panel">
+<h2 id="chatTitle">💬 Rozhovor se Sofií</h2>
+<div class="chatlog" id="chatlog" aria-live="polite">
+<div class="bubble"><div class="speaker">Sofie</div>Ahoj! Jsem Sofie, tvoje průvodkyně v NEXOŘE. Kam se dnes vydáme?</div>
+</div>
+<form id="chatForm"><input id="message" maxlength="240" placeholder="Napiš zprávu…" autocomplete="off"><button class="action" type="submit">Odeslat</button></form>
+<div class="row" style="margin-top:10px"><button class="secondary" id="surprise">Překvap mě</button><button class="secondary" id="clear">Nový rozhovor</button></div>
+</section>
+
+<section class="panel">
+<h2>🧭 Společná výprava</h2>
+<p class="small">Vyber situaci a sleduj, jak každý průvodce přispěje svým pohledem.</p>
+<select id="scene"><option value="mapa">Našli jste starou mapu</option><option value="most">Před vámi je záhadný most</option><option value="knihovna">Objevili jste zapomenutou knihovnu</option></select>
+<div class="row" style="margin-top:12px"><button class="action" id="group">Spustit týmový dialog</button></div>
+<div id="groupLog" class="chatlog" style="margin-top:12px"></div>
+</section>
+
+<section class="panel">
+<h2>📖 Zápisník světa</h2>
+<p class="small">Můžeš si uložit krátkou poznámku o vašem příběhu. Zůstane v tomto prohlížeči, pokud podporuje místní úložiště.</p>
+<form id="memoryForm"><input id="note" maxlength="180" placeholder="Např. Našli jsme stříbrný kompas"><button class="action">Uložit</button></form>
+<p id="memory">Zatím tu není žádná poznámka.</p>
+<button class="secondary" id="erase" style="margin-top:8px">Smazat zápisník</button>
+</section>
+<p class="notice">Ukázková verze: postavy používají připravené reakce, nejde o živou AI. Poznámky se ukládají pouze místně v tomto prohlížeči, pokud to jeho nastavení dovolí. Na sdíleném telefonu je může vidět i další uživatel.</p>
+<p class="small">NEXORA V1.2 · Mobilní prototyp · Bez účtu a bez plateb</p>
+</main>
+<script>
+const people={
+sofie:{name:"Sofie",emoji:"🌟",hello:"Ahoj! Jsem Sofie. Ráda objevuju nové nápady a příběhy. Co tě dnes zajímá?",lines:["To zní jako začátek pěkného dobrodružství!","Mám nápad: zkusme se na to podívat z trochu jiné strany.","Pojďme společně zjistit, co se za tím skrývá."]},
+alex:{name:"Alex",emoji:"🔬",hello:"Zdravím. Jsem Alex. Můžeme věci rozebrat krok za krokem a hledat souvislosti.",lines:["Nejdřív si oddělme fakta od domněnek.","Zajímavé. Jaké možnosti máme k dispozici?","Navrhuji postupovat systematicky."]},
+orion:{name:"Orion",emoji:"🪄",hello:"Vítej, poutníku. Jsem Orion. Každá záhada má svou stopu.",lines:["Staré příběhy často ukrývají nečekané odpovědi.","Trpělivost bývá mocnější než spěch.","Zkus položit otázku, kterou by ostatní přehlédli."]},
+lira:{name:"Lira",emoji:"🍃",hello:"Ahoj, cestovateli. Jsem Lira. Znám stezky, které na běžných mapách nenajdeš.",lines:["Každá cesta začíná malým rozhodnutím.","Podívej, tamhle vede pěšina mezi stromy.","Zapišme si tuhle stopu, ať ji neztratíme."]}
+};
+let current="sofie",turn=0;
+const log=document.getElementById("chatlog");
+function addBubble(who,text,you=false,target=log){const d=document.createElement("div");d.className="bubble"+(you?" you":"");if(!you){const s=document.createElement("div");s.className="speaker";s.textContent=who;d.appendChild(s)}const t=document.createElement("div");t.textContent=text;d.appendChild(t);target.appendChild(d);target.scrollTop=target.scrollHeight}
+function selectCharacter(id){current=id;turn=0;document.querySelectorAll(".char").forEach(b=>b.classList.toggle("active",b.dataset.id===id));document.getElementById("chatTitle").textContent="💬 Rozhovor s "+people[id].name;log.innerHTML="";addBubble(people[id].name,people[id].hello)}
+document.querySelectorAll(".char").forEach(b=>b.addEventListener("click",()=>selectCharacter(b.dataset.id)));
+document.getElementById("chatForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("message"),v=input.value.trim();if(!v)return;addBubble("Ty",v,true);input.value="";const p=people[current];const reply=p.lines[turn%p.lines.length];turn++;setTimeoutSafe(()=>addBubble(p.name,reply+" (To, co píšeš, beru jako námět pro další část našeho rozhovoru.)"),250)});
+function setTimeoutSafe(fn,ms){window.setTimeout(fn,ms)}
+document.getElementById("surprise").onclick=()=>{const ideas=["Co kdybychom vytvořili město na vrcholku stromu?","Představ si mapu, která se mění podle položených otázek.","Vymysleme záhadu, kterou vyřeší celý tým."];addBubble(people[current].name,ideas[Math.floor(Math.random()*ideas.length)])};
+document.getElementById("clear").onclick=()=>selectCharacter(current);
+const scenes={
+mapa:[["Sofie","Podívejte! Na okraji mapy je malá hvězda."],["Alex","Značka se opakuje třikrát. To může být důležitá stopa."],["Orion","Hvězda ukazuje místo, které se objeví jen za soumraku."],["Lira","Znám stezku k severnímu hřebeni. Můžeme začít tam."]],
+most:[["Sofie","Most vypadá starobyle, ale možná nás bezpečně převede."],["Alex","Nejdřív zkontrolujme, zda jsou jeho části stabilní."],["Orion","Na kameni je hádanka. Odpověď může odhalit pravidlo přechodu."],["Lira","Na druhé straně vidím značku stezky. Budu sledovat cestu."]],
+knihovna:[["Sofie","To je nádhera! Kolik příběhů tu asi čeká?"],["Alex","Rozhlédněme se po katalogu a datech na hřbetech knih."],["Orion","Některé svazky se otevírají jen tomu, kdo položí správnou otázku."],["Lira","Nakreslím plán místností, abychom se neztratili."]]
+};
+document.getElementById("group").onclick=()=>{const target=document.getElementById("groupLog");target.innerHTML="";scenes[document.getElementById("scene").value].forEach(([n,t])=>addBubble(n,t,false,target))};
+const KEY="nexora_v12_notes";
+function loadNotes(){let a=[];try{a=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){}document.getElementById("memory").textContent=a.length?a.map((x,i)=>(i+1)+". "+x).join("\n"):"Zatím tu není žádná poznámka."}
+document.getElementById("memoryForm").addEventListener("submit",e=>{e.preventDefault();const input=document.getElementById("note"),v=input.value.trim();if(!v)return;try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");a.push(v);localStorage.setItem(KEY,JSON.stringify(a.slice(-30)));input.value="";loadNotes()}catch(err){document.getElementById("memory").textContent="Prohlížeč místní ukládání nepovolil. Poznámku si můžeš zkopírovat jinam."}});
+document.getElementById("erase").onclick=()=>{try{localStorage.removeItem(KEY)}catch(e){}loadNotes()};
+loadNotes();
+</script></body></html>
